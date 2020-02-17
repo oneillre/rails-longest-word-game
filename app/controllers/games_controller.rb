@@ -12,22 +12,29 @@ class GamesController < ApplicationController
   end
 
   def score
-    raise
-    url = "https://wagon-dictionary.herokuapp.com/#{params[:word]}"
-    word_serialized = open(url).read
-    word = JSON.parse(word_serialized)
     time_taken = Time.now - params[:start_time].to_i
-    @word = params[:word].downcase.split('')
-    @letters = params[:letters].downcase.split
-    if word['found'] == false
-      @message = 'Sorry, that word is not in our dictionary'
-    elsif @word.all? { |letter| @letters.include?(letter) } == false
-      @message = 'Sorry, that word is not in the grid!'
+    @word = params[:word].downcase.split('').sort
+    @letters = params[:letters].downcase.split.sort
+    if grid_check(@word, @letters) == false
+      @message = 'Sorry, that word is not in the grid'
+    elsif dictionary_check(params[:word]) == false
+      @message = 'Sorry that word is not in the dictionary'
     else
-      # binding.pry
       @score = (@word.length / time_taken.to_f) * 1000
       @message = "Congratulations, your word exists and is in the grid!
       \n Your score is #{@score.round}"
     end
+  end
+
+  def grid_check(attempt, grid)
+    # binding.pry
+    attempt.all? { |letter| attempt.count(letter) <= grid.count(letter) }
+  end
+
+  def dictionary_check(word)
+    url = "https://wagon-dictionary.herokuapp.com/#{word}"
+    word_serialized = open(url).read
+    word_hash = JSON.parse(word_serialized)
+    word_hash['found']
   end
 end
