@@ -1,0 +1,11 @@
+<% @letters.each do |letter| %>
+<%= letter.upcase %>
+<% end %>
+
+<form action="/score" method="post">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <%= hidden_field_tag :letters, @letters %>
+  <%= hidden_field_tag :start_time, Time.now.to_i %>
+  <input type="text" name="word">
+  <input type="submit" value="Submit">
+</form>
