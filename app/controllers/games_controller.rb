@@ -23,11 +23,7 @@ class GamesController < ApplicationController
       @score = (@word.length / time_taken.to_f) * 1000
       @message = "Congratulations, your word exists and is in the grid!
       \n Your score is #{@score.round}"
-      if session[:score]
-        session[:score] += @score
-      else
-        session[:score] = @score
-      end
+      session[:score] ? session[:score] += @score : session[:score] = @score
       @session_score = session[:score].round
     end
   end
